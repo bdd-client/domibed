@@ -64,6 +64,7 @@ function my_custom_scripts()
 	// wp_enqueue_script( 'select2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js','',true );
 
 	wp_enqueue_script('custom-js', get_stylesheet_directory_uri() . '/script.js', array('jquery'), '', true);
+	wp_enqueue_script('js-2', get_stylesheet_directory_uri() . '/js-2.js', array('jquery'), '', true);
 }
 
 function twentyfifteen_child_widgets_init()
@@ -262,7 +263,7 @@ if ( ! function_exists( 'add_custom_content_meta_box' ) ){
 
         $args['textarea_rows'] = 6;
 
-        echo '<p>'.__( 'warranty (bolehngulik)', 'cmb' ).'</p>';
+        echo '<p>'.__( 'Warranty', 'cmb' ).'</p>';
         wp_editor( $warranty, 'warranty_wysiwyg', $args );
         echo "<br><br>";
 
