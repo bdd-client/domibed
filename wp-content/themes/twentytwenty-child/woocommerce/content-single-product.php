@@ -152,7 +152,7 @@ if ( post_password_required() ) {
 	<div class="container product-up">
 		<div class="row">
 			<div class="col-md-7 col-sm-12 col-xs-12">
-				<div class="product-detail-box">
+				<div class="product-detail-box style-slick2">
 					<?php
 
 						/**
@@ -172,7 +172,7 @@ if ( post_password_required() ) {
 						}
 
 						foreach ( $attachment_ids as $attachment_id ) {
-							$image_urls[] = wp_get_attachment_url( $attachment_id );
+							$image_urls[] = wp_get_attachment_url($attachment_id);
 						}
 						
 						$itemKe = 'full';
@@ -282,40 +282,3 @@ if ( post_password_required() ) {
 </div>
 
 <?php do_action( 'woocommerce_after_single_product' ); ?>
-
-<script>
-	jQuery(document).ready(function() {
-		setTimeout(function(){
-			jQuery('.box-variant').prepend(jQuery('.woocommerce-variation.single_variation'))
-		}, 1000)
-		jQuery('#variants').on('change', function() {
-			if(!jQuery(this).val()){
-				jQuery('.price-no-variant').show(400);
-			}
-			else{
-				jQuery('.price-no-variant').hide(400);
-			}
-		});
-		jQuery('.img-min-plus').click(function(){
-			var type = jQuery(this).attr('data-type');
-			let currentVal = parseInt(jQuery('.box-qty-custom .quantity input.qty').val());
-			if(type == 'min'){
-				if(currentVal > 1){
-					jQuery('.box-qty-custom .quantity input.qty').val(currentVal - 1);
-				}
-			}
-			else{
-				jQuery('.box-qty-custom .quantity input.qty').val(currentVal + 1);
-			}
-		});
-		jQuery('.tab-review-c ul.tabs li').click(function(){
-			var tab_id = jQuery(this).attr('data-tab');
-
-			jQuery('.tab-review-c ul.tabs li').removeClass('current');
-			jQuery('.tab-review-c .tab-content').removeClass('current');
-
-			jQuery(this).addClass('current');
-			jQuery("#"+tab_id).addClass('current');
-		})
-	})
-</script>
