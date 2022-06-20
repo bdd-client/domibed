@@ -6,10 +6,166 @@
 	<link rel="profile" href="https://gmpg.org/xfn/11">
 	<?php wp_head(); ?>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
 </head>
+<style>
+	<?php include 'wp-content/themes/twentytwenty-child/style.css' ?>
+</style>
+<style>
+	.section-inner {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		height: 82px;
+		width: 100%;
+		max-width: 1440px;
+		padding: 0 50px;
+		background-color: #fff;
+
+	}
+
+	.header-items-left {
+		display: flex;
+		align-items: center;
+	}
+
+	.header-items-left-logo {
+		margin-right: 20px;
+		height: 38px;
+		width: 108px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 2em;
+		color: #fff;
+	}
+
+	.header-items-left-menu {
+		display: flex;
+		align-items: center;
+		list-style-type: none;
+		font-size: 14px;
+		font-family: 'Quicksand';
+		margin-right: 20px;
+		cursor: pointer;
+		flex-wrap: wrap;
+		font-weight: 500;
+		color: yellow !important;
+	}
+
+
+	input[name="input-search"] {
+		height: 40px;
+		width: 302px;
+		border-width: 0;
+		color: #074ee8;
+		padding-left: 30px;
+		border-radius: 100px;
+		background-color: #F2F2F2;
+
+	}
+
+	.header-items-left-search {
+		position: relative;
+		display: flex;
+		align-items: center;
+	}
+
+	.icon-search {
+		position: absolute;
+		top: 40%;
+		margin-left: 10px;
+		font-size: 14px;
+	}
+
+	.header-items-right {
+		display: flex;
+		margin-left: 20px;
+	}
+
+	.header-items-right-items {
+		cursor: pointer;
+		margin-right: 37px;
+		font-size: 20px;
+	}
+
+	.header-items-menu-mobile {
+		display: none;
+	}
+
+	.mobile-icon-menu {
+		font-size: 30px;
+		margin-right: 30px;
+	}
+
+	.modal-mobile-menu {
+		display: none;
+		position: fixed;
+		width: 100%;
+		height: 86%;
+		z-index: 10;
+		bottom: 0;
+		left: 0;
+		background-color: #fff;
+		padding: 30px 20px;
+	}
+
+	.header-custom {
+		display: flex;
+		justify-content: center;
+		width: 100vw;
+		position: fixed !important;
+		top: 0;
+		left: 0;
+		height: 82px !important;
+		align-items: center;
+		z-index: 90;
+		background-color: green I !important;
+		margin-top: 3em;
+		background-color: #fff;
+	}
+
+	@media only screen and (max-width: 800px) {
+		.header-custom {
+			margin-bottom: -6em;
+		}
+
+		.mobile-hide {
+			display: none !important;
+		}
+
+		.header-items-menu-mobile {
+			display: block;
+		}
+
+		.header-items-left-logo {
+			margin-right: 30px;
+			height: 30px;
+			width: 60px;
+		}
+
+		.header-items-left-search {
+			height: 30px;
+			width: 100%;
+		}
+
+		.icon-search {
+			top: 43%;
+		}
+
+		input[name="input-search"] {
+			height: 100%;
+			width: 100%;
+		}
+
+		.header-items-left-menu {
+			padding-top: 30px;
+			flex-direction: column;
+			margin: 0;
+			align-items: flex-start;
+		}
+	}
+</style>
+
 
 <body <?php body_class(); ?>>
 	<?php
@@ -17,58 +173,34 @@
 	?>
 	<header id="site-header" class=" header-custom">
 		<div class="header-inner section-inner">
-			<div class="header-items-left" style="width: 100%;">
+			<div class="header-items-left">
 				<div class="header-items-menu-mobile" id="menu-mobile" name="menu-mobile">
 					<i class=" fa-solid fa-bars mobile-icon-menu" onclick="onClickMenu()"></i>
 				</div>
 				<div class="header-items-left-logo">
 
-					<?php
-					// Site title or logo.
-					twentytwenty_site_logo();
-					?>
+
 
 				</div>
-				<?php
-				if (has_nav_menu('primary') || !has_nav_menu('expanded')) {
-				?>
-					<ul class="header-items-left-menu mobile-hide nav-header" data-is-show="1">
-						<?php
-						if (has_nav_menu('primary')) {
-							wp_nav_menu(
-								array(
-									'container'  => '',
-									'items_wrap' => '%3$s',
-									'theme_location' => 'primary',
-								)
-							);
-						} elseif (!has_nav_menu('expanded')) {
-							wp_list_pages(
-								array(
-									'match_menu_classes' => true,
-									'show_sub_menu_icons' => true,
-									'title_li' => false,
-									'walker'   => new TwentyTwenty_Walker_Page(),
-								)
-							);
-						}
-						?>
-					</ul>
-				<?php
-				}?>
-				<form role="search" aria-label="Search for:" method="get" class="search-form" action="https://twentytwentydemo.org/" style="display: none; width: 100%;"> 
-					<label for="search-form-1"> 
-						<span class="screen-reader-text">Search for:</span> 
-						<input type="search" id="search-form-1" class="search-field" placeholder="Search &hellip;" value="" name="s" /> 
-					</label> 
-					<input type="submit" class="search-submit" value="Search" />
-				</form>
+				<!-- <ul class="header-items-left-menu mobile-hide">
+					<li>Matresses</li>
+					<li>Toppers</li>
+					<li>Pillow & Bolster</li>
+					<li>Bed Frame</li>
+					<li>Bedding</li>
+					<li>Bundles</li>
+					<li>Blog</li>
+				</ul> -->
+
+				<div class="header-items-left-search mobile-hide">
+					<input type="text" name="input-search" class="header-items-left-search" placeholder="Search product..." />
+					<i class="fa-solid fa-magnifying-glass icon-search"></i>
+				</div>
 			</div>
 			<div class="header-items-right">
-				<a href="#" onclick="search_form()"><i class="fa-solid fa-magnifying-glass header-items-right-items "></i></a>
-				<a href="/my-account"><i class="fa-solid fa-user header-items-right-items "></i></a>
+				<i class="fa-solid fa-user header-items-right-items "></i>
 				<i class="fa-solid fa-heart header-items-right-items"></i>
-				<a href="/cart"><i class="fa-solid fa-bag-shopping header-items-right-items"></i></a>
+				<i class="fa-solid fa-bag-shopping header-items-right-items"></i>
 			</div>
 		</div>
 		<!-- .header-inner -->
@@ -97,19 +229,18 @@
 	</header><!-- #site-header -->
 
 	<script>
-		function search_form(){
-			if (jQuery('.nav-header').data('is-show') == 1) {
-				jQuery(".nav-header" ).slideToggle( "slow", function() {
-					jQuery(".search-form" ).toggle();
-					jQuery('.nav-header').data('is-show', 0);
-				});
-			}else{
-				jQuery(".search-form" ).slideToggle( "slow", function() {
-					jQuery(".nav-header" ).toggle();
-					jQuery('.nav-header').data('is-show', 0);
-				});
-			}
-		}
+		// function onClickMenu() {
+		// 	alert('cja');
+		// 	$(".modal-mobile-menu").css("display", "flex");
+		// }
+
+
+		// $(function() {
+		// 	$("menu-mobile").on('click', function() {
+		// 		alert("Success !!!");
+
+		// 	})
+		// })
 	</script>
 
 	<?php
