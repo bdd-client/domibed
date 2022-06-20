@@ -14,7 +14,9 @@ function my_theme_enqueue_styles()
 		$theme->parent()->get('Version')
 	);
 
-	wp_enqueue_style( 'style2', get_stylesheet_directory_uri().'/style-2.css',
+	wp_enqueue_style(
+		'style2',
+		get_stylesheet_directory_uri() . '/style-2.css',
 		'',
 		$theme->get('Version') // this only works if you have Version in the style header
 	);
@@ -64,20 +66,7 @@ function my_custom_scripts()
 	// wp_enqueue_script( 'select2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js','',true );
 
 	wp_enqueue_script('custom-js', get_stylesheet_directory_uri() . '/script.js', array('jquery'), '', true);
-}
-
-add_filter('loop_shop_columns', 'loop_columns', 999);
-if (!function_exists('loop_columns')) {
-	function loop_columns() {
-		return 3; // 3 products per row
-	}
-}
-
-add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_home_text' );
-function wcc_change_breadcrumb_home_text( $defaults ) {
-    // Change the breadcrumb home text from 'Home' to 'Apartment'
-	$defaults['home'] = 'Apartment';
-	return $defaults;
+	wp_enqueue_script('js-2', get_stylesheet_directory_uri() . '/js-2.js', array('jquery'), '', true);
 }
 
 function twentyfifteen_child_widgets_init()
@@ -156,30 +145,33 @@ add_action('widgets_init', 'twentyfifteen_child_widgets_init');
 
 // change text badge sale
 add_filter('woocommerce_sale_flash', 'ds_change_sale_text');
-	function ds_change_sale_text() {
+function ds_change_sale_text()
+{
 	return '<span class="onsale">Sale</span>';
 }
 // change position discount price dan price
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
+remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 10);
 
-add_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 25 );
+add_action('woocommerce_single_product_summary', 'woocommerce_template_single_price', 25);
 
-add_action( 'custom_product_name_title', 'custom_product_category_title', 6 );
-function custom_product_category_title(){
+add_action('custom_product_name_title', 'custom_product_category_title', 6);
+function custom_product_category_title()
+{
 	global $post;
-	$terms = get_the_terms( $post->ID, 'product_cat' );
+	$terms = get_the_terms($post->ID, 'product_cat');
 	$title = '';
 	foreach ($terms as $term) {
-	   $title = $term->name .' ';
+		$title = $term->name . ' ';
 	}
-	echo "<span>".$title."</span>";
+	echo "<span>" . $title . "</span>";
 }
 
 // change position in product detail
 
-function getCategory(){
+function getCategory()
+{
 	global $post;
-	$terms = get_the_terms( $post->ID, 'product_cat' );
+	$terms = get_the_terms($post->ID, 'product_cat');
 	// echo "<pre>";
 	// var_dump($terms);
 	// echo "</pre>";
@@ -188,160 +180,175 @@ function getCategory(){
 		break;
 	}
 
-	echo "<div class='badge-category'>".$product_cat_name."</div>";
+	echo "<div class='badge-category'>" . $product_cat_name . "</div>";
 }
 
-function description_product(){
+function description_product()
+{
 	global $post;
 
-	$product = wc_get_product( $post->ID );
+	$product = wc_get_product($post->ID);
 	$product_description = $product->get_description();
 	// $product_short_description = $product->get_short_description();
 
-	if($product_description != ''){
+	if ($product_description != '') {
 		echo '
 			<div class="box-product-description">
 				<label class="subtitle-detail">Description</label>
-				<div class="text-description">'.$product_description.'</div>
+				<div class="text-description">' . $product_description . '</div>
 			</div>
 		';
 	}
 }
 
-function additional_description(){
+function additional_description()
+{
 	global $post;
 
-	$product = wc_get_product( $post->ID );
+	$product = wc_get_product($post->ID);
 	$measurements = $product->get_meta('_bhww_measurements_wysiwyg');
-    $materian = $product->get_meta('_bhww_materian_wysiwyg');
-    $warranty = $product->get_meta('_bhww_warranty_wysiwyg');
+	$materian = $product->get_meta('_bhww_materian_wysiwyg');
+	$warranty = $product->get_meta('_bhww_warranty_wysiwyg');
 
 	echo "
 	<div class='tabs accordion-additional'>
 		<div class='tab'>
 			<input type='checkbox' id='chck1'>
 			<label class='tab-label' for='chck1'>Measurements & Dimensions</label>
-			<div class='tab-content'>".apply_filters( 'the_content', $measurements )."</div>
+			<div class='tab-content'>" . apply_filters('the_content', $measurements) . "</div>
 		</div>
 		<div class='tab'>
 			<input type='checkbox' id='chck2'>
 			<label class='tab-label' for='chck2'>Materian & Construction</label>
-			<div class='tab-content'>".apply_filters( 'the_content', $materian )."</div>
+			<div class='tab-content'>" . apply_filters('the_content', $materian) . "</div>
 		</div>
 		<div class='tab'>
 			<input type='checkbox' id='chck3'>
 			<label class='tab-label' for='chck3'>Warranty & Shipping</label>
-			<div class='tab-content'>".apply_filters( 'the_content', $warranty )."</div>
+			<div class='tab-content'>" . apply_filters('the_content', $warranty) . "</div>
 		</div>
 	</div>
 	";
 }
 
-add_action( 'woocommerce_single_product_summary', 'getCategory', 1);
+add_action('woocommerce_single_product_summary', 'getCategory', 1);
 remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40);
-add_action( 'woocommerce_single_product_summary', 'description_product', 51);
-add_action( 'woocommerce_single_product_summary', 'additional_description', 52);
+add_action('woocommerce_single_product_summary', 'description_product', 51);
+add_action('woocommerce_single_product_summary', 'additional_description', 52);
 
-remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
-add_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 21 );
+remove_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10);
+add_action('woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 21);
 
 // end change
 
 // add meta box custom
-add_action( 'add_meta_boxes', 'create_custom_meta_box' );
-if ( ! function_exists( 'create_custom_meta_box' ) )
-{
-    function create_custom_meta_box()
-    {
-        add_meta_box(
-            'custom_product_meta_box',
-            __( 'Additional Product Information <em>(optional)</em>', 'cmb' ),
-            'add_custom_content_meta_box',
-            'product',
-            'normal',
-            'default'
-        );
-    }
+add_action('add_meta_boxes', 'create_custom_meta_box');
+if (!function_exists('create_custom_meta_box')) {
+	function create_custom_meta_box()
+	{
+		add_meta_box(
+			'custom_product_meta_box',
+			__('Additional Product Information <em>(optional)</em>', 'cmb'),
+			'add_custom_content_meta_box',
+			'product',
+			'normal',
+			'default'
+		);
+	}
 }
 
-if ( ! function_exists( 'add_custom_content_meta_box' ) ){
-    function add_custom_content_meta_box( $post ){
-        $prefix = '_bhww_'; // global $prefix;
+if (!function_exists('add_custom_content_meta_box')) {
+	function add_custom_content_meta_box($post)
+	{
+		$prefix = '_bhww_'; // global $prefix;
 
-        $measurements = get_post_meta($post->ID, $prefix.'measurements_wysiwyg', true) ? get_post_meta($post->ID, $prefix.'measurements_wysiwyg', true) : '';
-        $materian = get_post_meta($post->ID, $prefix.'materian_wysiwyg', true) ? get_post_meta($post->ID, $prefix.'materian_wysiwyg', true) : '';
-        $warranty = get_post_meta($post->ID, $prefix.'warranty_wysiwyg', true) ? get_post_meta($post->ID, $prefix.'warranty_wysiwyg', true) : '';
-		$img_desktop = get_post_meta($post->ID, $prefix.'img_desktop_wysiwyg', true) ? get_post_meta($post->ID, $prefix.'img_desktop_wysiwyg', true) : '';
-		$img_mobile = get_post_meta($post->ID, $prefix.'img_mobile_wysiwyg', true) ? get_post_meta($post->ID, $prefix.'img_mobile_wysiwyg', true) : '';
+		$measurements = get_post_meta($post->ID, $prefix . 'measurements_wysiwyg', true) ? get_post_meta($post->ID, $prefix . 'measurements_wysiwyg', true) : '';
+		$materian = get_post_meta($post->ID, $prefix . 'materian_wysiwyg', true) ? get_post_meta($post->ID, $prefix . 'materian_wysiwyg', true) : '';
+		$warranty = get_post_meta($post->ID, $prefix . 'warranty_wysiwyg', true) ? get_post_meta($post->ID, $prefix . 'warranty_wysiwyg', true) : '';
+		$img_desktop = get_post_meta($post->ID, $prefix . 'img_desktop_wysiwyg', true) ? get_post_meta($post->ID, $prefix . 'img_desktop_wysiwyg', true) : '';
+		$img_mobile = get_post_meta($post->ID, $prefix . 'img_mobile_wysiwyg', true) ? get_post_meta($post->ID, $prefix . 'img_mobile_wysiwyg', true) : '';
 
-        $args['textarea_rows'] = 6;
+		$args['textarea_rows'] = 6;
 
-        echo '<p>'.__( 'warranty (bolehngulik)', 'cmb' ).'</p>';
+        echo '<p>'.__( 'Warranty', 'cmb' ).'</p>';
         wp_editor( $warranty, 'warranty_wysiwyg', $args );
         echo "<br><br>";
 
-        echo '<p>'.__( 'Measurements & Dimensions', 'cmb' ).'</p>';
-        wp_editor( $measurements, 'measurements_wysiwyg', $args );
-        echo "<br><br>";
-        
-        echo '<p>'.__( 'Materian & Construction', 'cmb' ).'</p>';
-        wp_editor( $materian, 'materian_wysiwyg', $args );
+		echo '<p>' . __('Measurements & Dimensions', 'cmb') . '</p>';
+		wp_editor($measurements, 'measurements_wysiwyg', $args);
+		echo "<br><br>";
 
-		echo '<p>'.__( 'Image desktop (additional)', 'cmb' ).'</p>';
-        wp_editor( $img_desktop, 'img_desktop_wysiwyg', $args );
+		echo '<p>' . __('Materian & Construction', 'cmb') . '</p>';
+		wp_editor($materian, 'materian_wysiwyg', $args);
 
-		echo '<p>'.__( 'Image mobile (additional)', 'cmb' ).'</p>';
-        wp_editor( $img_mobile, 'img_mobile_wysiwyg', $args );
+		echo '<p>' . __('Image desktop (additional)', 'cmb') . '</p>';
+		wp_editor($img_desktop, 'img_desktop_wysiwyg', $args);
 
-        echo '<input type="hidden" name="custom_product_field_nonce" value="' . wp_create_nonce() . '">';
-    }
+		echo '<p>' . __('Image mobile (additional)', 'cmb') . '</p>';
+		wp_editor($img_mobile, 'img_mobile_wysiwyg', $args);
+
+		echo '<input type="hidden" name="custom_product_field_nonce" value="' . wp_create_nonce() . '">';
+	}
 }
 
 //Save the data of the Meta field
-add_action( 'save_post', 'save_custom_content_meta_box', 10, 1 );
-if ( ! function_exists( 'save_custom_content_meta_box' ) )
-{
+add_action('save_post', 'save_custom_content_meta_box', 10, 1);
+if (!function_exists('save_custom_content_meta_box')) {
 
-    function save_custom_content_meta_box( $post_id ) {
-        $prefix = '_bhww_'; // global $prefix;
+	function save_custom_content_meta_box($post_id)
+	{
+		$prefix = '_bhww_'; // global $prefix;
 
-        // We need to verify this with the proper authorization (security stuff).
+		// We need to verify this with the proper authorization (security stuff).
 
-        // Check if our nonce is set.
-        if ( ! isset( $_POST[ 'custom_product_field_nonce' ] ) ) {
-            return $post_id;
-        }
-        $nonce = $_REQUEST[ 'custom_product_field_nonce' ];
+		// Check if our nonce is set.
+		if (!isset($_POST['custom_product_field_nonce'])) {
+			return $post_id;
+		}
+		$nonce = $_REQUEST['custom_product_field_nonce'];
 
-        //Verify that the nonce is valid.
-        if ( ! wp_verify_nonce( $nonce ) ) {
-            return $post_id;
-        }
+		//Verify that the nonce is valid.
+		if (!wp_verify_nonce($nonce)) {
+			return $post_id;
+		}
 
-        // If this is an autosave, our form has not been submitted, so we don't want to do anything.
-        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-            return $post_id;
-        }
+		// If this is an autosave, our form has not been submitted, so we don't want to do anything.
+		if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+			return $post_id;
+		}
 
-        // Check the user's permissions.
-        if ( 'product' == $_POST[ 'post_type' ] ){
-            if ( ! current_user_can( 'edit_product', $post_id ) )
-                return $post_id;
-        } else {
-            if ( ! current_user_can( 'edit_post', $post_id ) )
-                return $post_id;
-        }
+		// Check the user's permissions.
+		if ('product' == $_POST['post_type']) {
+			if (!current_user_can('edit_product', $post_id))
+				return $post_id;
+		} else {
+			if (!current_user_can('edit_post', $post_id))
+				return $post_id;
+		}
 
-        // Sanitize user input and update the meta field in the database.
-        update_post_meta( $post_id, $prefix.'warranty_wysiwyg', wp_kses_post($_POST[ 'warranty_wysiwyg' ]) );
-        update_post_meta( $post_id, $prefix.'measurements_wysiwyg', wp_kses_post($_POST[ 'measurements_wysiwyg' ]) );
-        update_post_meta( $post_id, $prefix.'materian_wysiwyg', wp_kses_post($_POST[ 'materian_wysiwyg' ]) );
-		update_post_meta( $post_id, $prefix.'img_desktop_wysiwyg', wp_kses_post($_POST[ 'img_desktop_wysiwyg' ]) );
-		update_post_meta( $post_id, $prefix.'img_mobile_wysiwyg', wp_kses_post($_POST[ 'img_mobile_wysiwyg' ]) );
-    }
+		// Sanitize user input and update the meta field in the database.
+		update_post_meta($post_id, $prefix . 'warranty_wysiwyg', wp_kses_post($_POST['warranty_wysiwyg']));
+		update_post_meta($post_id, $prefix . 'measurements_wysiwyg', wp_kses_post($_POST['measurements_wysiwyg']));
+		update_post_meta($post_id, $prefix . 'materian_wysiwyg', wp_kses_post($_POST['materian_wysiwyg']));
+		update_post_meta($post_id, $prefix . 'img_desktop_wysiwyg', wp_kses_post($_POST['img_desktop_wysiwyg']));
+		update_post_meta($post_id, $prefix . 'img_mobile_wysiwyg', wp_kses_post($_POST['img_mobile_wysiwyg']));
+	}
 }
 
 // end meta box
 
 
 add_action('wp_enqueue_scripts', 'my_custom_scripts');
+add_action('woocommerce_register_form_start', 'bbloomer_add_name_woo_account_registration');
+add_action('woocommerce_created_customer', 'bbloomer_save_name_fields');
+function bbloomer_save_name_fields($customer_id)
+{
+	if (isset($_POST['billing_first_name'])) {
+		update_user_meta($customer_id, 'billing_first_name', sanitize_text_field($_POST['billing_first_name']));
+		update_user_meta($customer_id, 'first_name', sanitize_text_field($_POST['billing_first_name']));
+	}
+	if (isset($_POST['billing_last_name'])) {
+		update_user_meta($customer_id, 'billing_last_name', sanitize_text_field($_POST['billing_last_name']));
+		update_user_meta($customer_id, 'last_name', sanitize_text_field($_POST['billing_last_name']));
+	}
+}

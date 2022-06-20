@@ -71,7 +71,7 @@ if ( ! comments_open() ) {
 							<?php //wp_list_comments( apply_filters( 'woocommerce_product_review_list_args', array( 'callback' => 'woocommerce_comments' ) ) ); ?>
 						</ol>
 
-						<ol class="commentlist">
+						<ol class="commentlist listrev-product-custom" id="listrev-custom">
 							<?php
 								$args_comment = array( 
 									'number'      => 1000, 
@@ -83,11 +83,26 @@ if ( ! comments_open() ) {
 							
 								$comments_rev = get_comments( $args_comment );
 								
-
+								$comment_js = [];
 								foreach($comments_rev as $key => $val_com){
 									$rating_star = get_comment_meta($val_com->comment_ID, 'rating', true);
+									$words = explode(" ", $val_com->comment_author);
+									$initials = null;
+									foreach ($words as $key => $w) {
+										if($key > 1){
+											break;
+										}
+										$initials .= $w[0];
+									}
+
+									$comment_js[] = array(
+										"nama" => $val_com->comment_author,
+										"inisial" => strtoupper($initials),
+										"content" => $val_com->comment_content,
+										"star" => $rating_star,
+									);
 							?>
-								<li class="review">
+								<!-- <li class="review">
 									<div class="profil-avatar">
 										<div class="avatar"></div>
 										<div class="rating-name">
@@ -99,16 +114,21 @@ if ( ! comments_open() ) {
 										</div>
 									</div>
 									<div class="description-review"><?=$val_com->comment_content;?></div>
-								</li>
+								</li> -->
 							<?php
 								}
 
 								// echo "<pre>";
-								// var_dump($comments_rev);
+								// var_dump($comment_js);
 								// echo "</pre>";
 							?>
 						</ol>
 						
+						<div class="pagination-custom">
+							<div class="page-item" data="prev"></div>
+							<div class="text-pagination-c">Page <span id="cur_page"></span> of <span id="total_page"></span></div>
+							<div class="page-item" data="next"></div>
+						</div>
 
 						<?php
 						if ( get_comment_pages_count() > 1 && get_option( 'page_comments' ) ) :
@@ -213,3 +233,6 @@ if ( ! comments_open() ) {
 
 	<div class="clear"></div>
 </div>
+<script>
+	var comments = <?php echo json_encode($comment_js ) ?>;
+</script>
