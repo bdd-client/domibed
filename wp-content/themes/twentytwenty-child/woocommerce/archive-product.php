@@ -92,7 +92,7 @@ do_action('woocommerce_before_main_content');
 				font-size: 20px;
 				font-family: 'Quicksand', sans-serif !important;
 				font-weight: 600;
-				width: 120px;
+				width: 140px;
 				height: 45px;
 				border-width: 0;
 				border-radius: 100px;
@@ -243,7 +243,7 @@ do_action('woocommerce_before_main_content');
 
 			.checkmark {
 				position: absolute;
-				top: 4px;
+				top: 3.5px;
 				left: 0;
 				height: 16px;
 				width: 16px;
@@ -344,7 +344,7 @@ do_action('woocommerce_before_main_content');
 		<div class="box-sort-wrapper">
 			<div class="box-sort-wrapper-inner">
 				<div class="filter-wrapper" onclick="onOpenModalFilter()"> <img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/Group-1-3.png" alt="">Filter</div>
-				<div class="sorting-wrapper" onclick="onOpenModalSorting()"> Sort by</div>
+				<div class="sorting-wrapper" onclick="onOpenModalSorting()"> Sort by <img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-arrow-down.png" alt=""></div>
 				<!-- <form class="woocommerce-ordering-custom" method="get">
 					<select name="sorting" id="cars" class="select-wrapper">
 						<option value="volvo">Sort by</option>
@@ -357,10 +357,10 @@ do_action('woocommerce_before_main_content');
 			</div>
 		</div>
 		<div id="modal-sorting" class="modal-sorting">
-			<div class="modal-sorting-items" onclick="goSorting('?orderby=popularity')">
+			<div class="modal-sorting-items" onclick="goSorting('popularity')">
 				Sort by popularity
 			</div>
-			<div class="modal-sorting-items" onclick="goSorting('?orderby=popularity')">
+			<div class="modal-sorting-items" onclick="goSorting('popularity')">
 				Sort by averagi rating
 			</div>
 		</div>
@@ -390,13 +390,20 @@ do_action('woocommerce_before_main_content');
 								'hide_empty'   => $empty
 							);
 							$all_categories = get_categories($args);
+							$url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 
 							foreach ($all_categories as $cat) {
 								$name_category =  $cat->name;
+								$name_category_lowercase = strtolower($name_category);
+
 								echo "<label class='radio-button-group'>";
 								echo $name_category;
-								echo "<input type='radio' id='category' name='category' value='HTML'>";
+								if (str_contains($url, $name_category_lowercase)) {
+									echo "<input type='radio' id='category' checked='checked' name='category' value=${name_category}>";
+								} else {
+									echo "<input type='radio' id='category' name='category' value=${name_category}>";
+								}
 								echo " <span class='checkmark'></span>";
 								echo "</label>";
 							}
@@ -439,15 +446,15 @@ do_action('woocommerce_before_main_content');
 						</div>
 						<div class="modal-filter-group-filter">
 							<label class='radio-button-group radio-button-group-single'>Rp 1.0jt - Rp 2.0jt
-								<input type='radio' id='price' name='price' value='1000000'>
+								<input type='radio' id='price' name='price' value='1000000,2000000'>
 								<span class='checkmark'></span>
 							</label>
 							<label class='radio-button-group radio-button-group-single'>Rp 2.0jt - Rp 3.0jt
-								<input type='radio' id='price' name='price' value='2000000'>
+								<input type='radio' id='price' name='price' value='2000000,3000000'>
 								<span class='checkmark'></span>
 							</label>
-							<label class='radio-button-group radio-button-group-single'>Rp 3.0jt - Rp 4.0jt
-								<input type='radio' id='price' name='price' value='3000000'>
+							<label class='radio-button-group radio-button-group-single'>Rp 3.0jt - Rp 5.0jt
+								<input type='radio' id='price' name='price' value='3000000,5000000'>
 								<span class='checkmark'></span>
 							</label>
 						</div>
@@ -731,7 +738,65 @@ if (woocommerce_product_loop()) {
 			}
 
 			function onChangeResult() {
-				document.getElementById("modal-filter").style.display = "none";
+				let current_url = window.location.href;
+				let new_url = ''
+				let filter_url = ''
+
+				//check sorting
+				let url_sorting = ''
+				if (current_url.includes("orderby")) {
+					split_url = current_url.split('orderby')
+					split_url = split_url[split_url.length - 1]
+					url_sorting = '/?orderby' + split_url
+				}
+
+
+
+				if (current_url.includes("shop")) {
+					filter_url = current_url.split('shop')
+					new_url = filter_url[0];
+				} else {
+					filter_url = current_url.split('product-category')
+					new_url = filter_url[0];
+				}
+
+				//Filter Category
+
+				let url_category = ''
+				let category_selected = null
+				if (document.querySelector('input[name="category"]:checked')) {
+					category_selected = document.querySelector('input[name="category"]:checked').value.toLowerCase()
+					if (category_selected) {
+						url_category = `/product-category/${category_selected}`
+					} else {
+						url_category = ''
+					}
+				}
+
+				//Filter Category12
+				let url_price = ''
+				if (document.querySelector('input[name="price"]:checked')) {
+					let price_selected = document.querySelector('input[name="price"]:checked').value.toLowerCase();
+					let split_price = price_selected.split(',')
+					let url_price_before = ''
+					if (category_selected) {
+						url_price_before = `?min_price=${split_price[0]}&max_price=${split_price[1]}`
+					} else {
+						url_price_before = `shop?min_price=${split_price[0]}&max_price=${split_price[1]}`
+					}
+
+					if (url_price_before) {
+						url_price = url_price_before
+					} else {
+						url_price = ''
+					}
+				}
+
+				window.location.href = new_url + url_category + url_price + url_sorting
+
+
+
+
 			}
 
 			function onOpenModalSorting() {
@@ -740,18 +805,31 @@ if (woocommerce_product_loop()) {
 
 			function goSorting(sorting) {
 				var current_location = window.location.href;
-				window.location = current_location + sorting;
+				let url_sorting = ''
+				if (current_location.includes("/?orderby")) {
+					split_url = current_location.split('/?orderby')
+					split_url = split_url[0]
+					url_sorting = split_url
+				}
+
+
+				window.location = url_sorting + `/?orderby=${sorting}`
 			}
 
 
 
-			// window.addEventListener('click', function(e) {
-			// 	if (document.getElementById('modal-filter').contains(e.target)) {
-
-			// 	} else {
-			// 		document.getElementById("modal-filter").style.display = "none";
-			// 	}
-			// });
+			document.addEventListener('mouseup', function(e) {
+				var container = document.getElementById('modal-filter');
+				if (!container.contains(e.target)) {
+					document.getElementById("modal-filter").style.display = "none";
+				}
+			});
+			document.addEventListener('mouseup', function(e) {
+				var container = document.getElementById('modal-sorting');
+				if (!container.contains(e.target)) {
+					document.getElementById("modal-sorting").style.display = "none";
+				}
+			});
 		</script>
 
 
