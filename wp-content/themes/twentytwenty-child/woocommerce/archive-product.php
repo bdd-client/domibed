@@ -392,6 +392,7 @@ do_action('woocommerce_before_main_content');
 							$all_categories = get_categories($args);
 							$url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
+
 							foreach ($all_categories as $cat) {
 								$name_category =  $cat->name;
 								$name_category_lowercase = strtolower($name_category);

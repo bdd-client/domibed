@@ -18,5 +18,10 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+$class_rel = '';
+if ( is_product() ){
+	$class_rel = 'this-related';
+}
 ?>
-<ul class="products columns-<?php echo esc_attr( wc_get_loop_prop( 'columns' ) ); ?>">
+<ul class="products <?php if($class_rel == 'this-related'){ ?> this-related columns-3 <?php } else { ?> columns-<?php echo esc_attr( wc_get_loop_prop( 'columns' ) ); ?> <?php } ?>">
