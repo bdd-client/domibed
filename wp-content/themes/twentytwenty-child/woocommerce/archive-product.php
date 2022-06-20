@@ -31,34 +31,336 @@ do_action('woocommerce_before_main_content');
 
 ?>
 <header class="woocommerce-products-header">
-	<?php 
-    $attr_color = get_terms( array(
-	    'taxonomy' => 'pa_color',
-	    'hide_empty' => false
-	));
-
-	$attr_size = get_terms( array(
-	    'taxonomy' => 'pa_size',
-	    'hide_empty' => false
-	));  
-
-	?>
 	<?php if (apply_filters('woocommerce_show_page_title', true)) : ?>
+		<style>
+			.hide-content {
+				height: 80px;
+				position: relative;
+				width: 100%;
+				color: transparent;
+				margin-bottom: 65px;
+			}
+
+			.box-sort-wrapper {
+				position: absolute;
+				left: 0;
+				width: 100%;
+				height: 80px;
+				border-bottom-width: 1px;
+				border-top-width: 1px;
+				border-right-width: 0;
+				border-left-width: 0;
+				border-style: solid;
+				border-color: #ECECEC;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+
+			}
+
+			.box-sort-wrapper-inner {
+				width: 1440px;
+				height: 100%;
+				display: flex;
+				align-items: center;
+			}
+
+			.filter-wrapper {
+				background: #F4F4F4;
+				font-size: 20px;
+				font-family: 'Quicksand', sans-serif !important;
+				font-weight: 600;
+				width: 130px;
+				height: 45px;
+				border-width: 0;
+				border-radius: 100px;
+				position: relative;
+				appearance: none;
+				color: #130F26;
+				margin-right: 10px;
+				cursor: pointer;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 20px 0 24px;
+				z-index: 1;
+			}
+
+			.sorting-wrapper {
+				background: #F4F4F4;
+				font-size: 20px;
+				font-family: 'Quicksand', sans-serif !important;
+				font-weight: 600;
+				width: 140px;
+				height: 45px;
+				border-width: 0;
+				border-radius: 100px;
+				position: relative;
+				appearance: none;
+				color: #130F26;
+				margin-right: 10px;
+				cursor: pointer;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 20px 0 24px;
+				z-index: 1;
+			}
+
+			.filter-wrapper-icon {
+				display: flex;
+				left: 24px;
+				align-items: center;
+				height: 100%;
+				position: absolute;
+				cursor: pointer;
+			}
+
+			select[name="sorting"] {
+				background: #F4F4F4;
+				font-size: 20px;
+				font-family: 'Quicksand', sans-serif !important;
+				font-weight: 600;
+				padding: 10px 20px;
+				border-width: 0;
+				border-radius: 100px;
+				color: #130F26;
+				-webkit-appearance: none;
+				-moz-appearance: none;
+
+			}
+
+			.select-wrapper {
+				position: relative;
+			}
+
+			.select-wrapper::after {
+				content: "▼";
+				font-size: 1rem;
+				top: 6px;
+				right: 10px;
+				position: absolute;
+			}
+
+			.modal-sorting {
+				background-color: #fff;
+				position: absolute;
+				z-index: 2;
+				width: 250px;
+				height: 100px;
+				margin-left: 100px;
+				margin-top: 70px;
+				border-radius: 10px;
+				padding: 10px;
+				display: none;
+				flex-direction: column;
+				box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+			}
+
+			.modal-sorting-items {
+				margin-top: 10px;
+				font-size: 16px;
+				cursor: pointer;
+			}
+
+			.modal-filter {
+				width: 100%;
+				height: 307px;
+				position: absolute;
+				z-index: 2;
+				left: 0;
+				margin-top: 70px;
+				display: none;
+				justify-content: center;
+				align-items: center;
+				background-color: #fff;
+			}
+
+			.modal-filter-inner {
+				height: 100%;
+				max-width: 1440px;
+				width: 100%;
+				background-color: #fff;
+				padding: 30px 0;
+			}
+
+			.modal-filter-items {
+				width: 336px;
+				height: 183px;
+				border: 1px solid #f0f0f0;
+				padding: 20px 30px;
+			}
+
+			.modal-filter-group {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.modal-filter-group-button {
+				display: flex;
+				justify-content: flex-end;
+			}
+
+			.modal-filter-title {
+				font-weight: 600;
+				font-size: 20px;
+				font-family: 'Quicksand', sans-serif !important;
+				color: #130F26;
+				margin-bottom: 17px;
+			}
+
+			.modal-filter-group-filter {
+				display: flex;
+				justify-content: space-between;
+				flex-wrap: wrap;
+			}
+
+			.radio-button-group {
+				display: block;
+				position: relative;
+				margin-bottom: 12px;
+				cursor: pointer;
+				font-size: 16px;
+				-webkit-user-select: none;
+				width: 49%;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+				padding-left: 25px;
+
+			}
+
+			.radio-button-group-single {
+				width: 100% !important;
+			}
+
+			.radio-button-group input {
+				position: absolute;
+				opacity: 0;
+				cursor: pointer;
+			}
+
+			.checkmark {
+				position: absolute;
+				top: 3.5px;
+				left: 0;
+				height: 16px;
+				width: 16px;
+				background-color: #fff;
+				border: 0.1px solid #f0f0f0;
+				border-radius: 50%;
+			}
+
+			.radio-button-group:hover input~.checkmark {
+				background-color: #ccc;
+			}
+
+			.radio-button-group input:checked~.checkmark {
+				background-color: #33A595;
+			}
+
+			.checkmark:after {
+				content: "";
+				position: absolute;
+				display: none;
+			}
+
+			.radio-button-group input:checked~.checkmark:after {
+				display: block;
+			}
+
+			.radio-button-group .checkmark:after {
+				top: 4.5px;
+				left: 4px;
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: white;
+			}
+
+			.radio-button-color {
+				width: 20px;
+				height: 20px;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin-right: 10px;
+			}
+
+			.color-gray {
+				background-color: gray;
+				color: gray;
+			}
+
+			.color-orange {
+				background-color: orange;
+				color: orange;
+			}
+
+			.color-green {
+				background-color: #33A595;
+				color: #33A595;
+			}
+
+			.color-black {
+				background-color: black;
+				color: black;
+			}
+
+			.color-blue {
+				background-color: #2356A7;
+				color: #2356A7;
+			}
+
+			.color-white {
+				background-color: #EFEFEF;
+				color: #EFEFEF;
+			}
+
+			.button-filter {
+				/* background: linear-gradient(93.47deg, #EC6F66 -32.61%, #F3A183 119.08%); */
+				background-color: #33A595;
+				width: 167px;
+				height: 44px;
+				margin-top: 30px;
+				cursor: pointer;
+				border-radius: 60px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				color: #fff;
+				font-size: 14px;
+				padding: 0 16px 0 20px;
+
+			}
+		</style>
 		<h1 class="woocommerce-products-header__title page-title"><?php woocommerce_page_title(); ?></h1>
 		<div class="page-label">
-			<?php do_action('woocommerce_archive_description');?>
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+			A eget sapien nisl egestas purus.
 		</div>
-		<div class="box-sort-wrapper container">
+		<div class="box-sort-wrapper">
 			<div class="box-sort-wrapper-inner">
 				<div class="filter-wrapper" onclick="onOpenModalFilter()"> <img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/Group-1-3.png" alt="">Filter</div>
-				<div class="sorting-wrapper" onclick="onOpenModalSorting()"> Sort by</div>
+				<div class="sorting-wrapper" onclick="onOpenModalSorting()"> Sort by <img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-arrow-down.png" alt=""></div>
+				<!-- <form class="woocommerce-ordering-custom" method="get">
+					<select name="sorting" id="cars" class="select-wrapper">
+						<option value="volvo">Sort by</option>
+						<option value="volvo">Volvo</option>
+						<option value="saab">Saab</option>
+						<option value="mercedes">Mercedes</option>
+						<option value="audi">Audi</option>
+					</select>
+				</form> -->
 			</div>
 		</div>
 		<div id="modal-sorting" class="modal-sorting">
-			<div class="modal-sorting-items" onclick="goSorting('?orderby=popularity')">
+			<div class="modal-sorting-items" onclick="goSorting('popularity')">
 				Sort by popularity
 			</div>
-			<div class="modal-sorting-items" onclick="goSorting('?orderby=popularity')">
+			<div class="modal-sorting-items" onclick="goSorting('popularity')">
 				Sort by averagi rating
 			</div>
 		</div>
@@ -69,6 +371,7 @@ do_action('woocommerce_before_main_content');
 						<div class="modal-filter-title">Category</div>
 						<div class="modal-filter-group-filter">
 							<?php
+
 							$taxonomy     = 'product_cat';
 							$orderby      = 'name';
 							$show_count   = 0;      // 1 for yes, 0 for no
@@ -87,12 +390,19 @@ do_action('woocommerce_before_main_content');
 								'hide_empty'   => $empty
 							);
 							$all_categories = get_categories($args);
+							$url = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 							foreach ($all_categories as $cat) {
 								$name_category =  $cat->name;
+								$name_category_lowercase = strtolower($name_category);
+
 								echo "<label class='radio-button-group'>";
 								echo $name_category;
-								echo "<input type='radio' id='category' name='category' value='".$cat->slug."'>";
+								if (str_contains($url, $name_category_lowercase)) {
+									echo "<input type='radio' id='category' checked='checked' name='category' value=${name_category}>";
+								} else {
+									echo "<input type='radio' id='category' name='category' value=${name_category}>";
+								}
 								echo " <span class='checkmark'></span>";
 								echo "</label>";
 							}
@@ -103,12 +413,30 @@ do_action('woocommerce_before_main_content');
 					<div class="modal-filter-items">
 						<div class="modal-filter-title">Size</div>
 						<div class="modal-filter-group-filter">
-							<?php foreach ($attr_size as $key => $value) { ?>
-							<label class='radio-button-group '><?= $value->name ?>
-								<input type='radio' id='size' name='size' value='<?= $value->slug ?>'>
+							<label class='radio-button-group '>Twin
+								<input type='radio' id='size' name='size' value='twin'>
 								<span class='checkmark'></span>
 							</label>
-							<?php } ?>
+							<label class='radio-button-group '>Twin XL
+								<input type='radio' id='size' name='size' value='twin-xl'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>Full
+								<input type='radio' id='size' name='size' value='full'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>Queen
+								<input type='radio' id='size' name='size' value='queen'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>King
+								<input type='radio' id='size' name='size' value='king'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>CAL King
+								<input type='radio' id='size' name='size' value='cl-king'>
+								<span class='checkmark'></span>
+							</label>
 						</div>
 					</div>
 					<div class="modal-filter-items">
@@ -117,15 +445,15 @@ do_action('woocommerce_before_main_content');
 						</div>
 						<div class="modal-filter-group-filter">
 							<label class='radio-button-group radio-button-group-single'>Rp 1.0jt - Rp 2.0jt
-								<input type='radio' id='price' name='price' value='1000000'>
+								<input type='radio' id='price' name='price' value='1000000,2000000'>
 								<span class='checkmark'></span>
 							</label>
 							<label class='radio-button-group radio-button-group-single'>Rp 2.0jt - Rp 3.0jt
-								<input type='radio' id='price' name='price' value='2000000'>
+								<input type='radio' id='price' name='price' value='2000000,3000000'>
 								<span class='checkmark'></span>
 							</label>
-							<label class='radio-button-group radio-button-group-single'>Rp 3.0jt - Rp 4.0jt
-								<input type='radio' id='price' name='price' value='3000000'>
+							<label class='radio-button-group radio-button-group-single'>Rp 3.0jt - Rp 5.0jt
+								<input type='radio' id='price' name='price' value='3000000,5000000'>
 								<span class='checkmark'></span>
 							</label>
 						</div>
@@ -133,20 +461,53 @@ do_action('woocommerce_before_main_content');
 					<div class="modal-filter-items">
 						<div class="modal-filter-title">Color</div>
 						<div class="modal-filter-group-filter">
-							<?php foreach ($attr_color as $term) { ?>
 							<label class='radio-button-group '>
 								<div style="display: flex;align-items:center;">
-									<div class="radio-button-color" style="background-color: <?= get_term_meta($term->term_id)["product_attribute_color"][0] ?>">.</div><?=$term->name?>
+									<div class="radio-button-color color-orange">.</div>Orange
 								</div>
-								<input type='radio' id='color' name='color' value="<?=$term->slug?>">
+								<input type='radio' id='color' name='color' value='orange'>
 								<span class='checkmark'></span>
 							</label>
-							<?php } ?>
+							<label class='radio-button-group '>
+								<div style="display: flex;align-items:center;">
+									<div class="radio-button-color color-gray">.</div>gray
+								</div>
+								<input type='radio' id='color' name='color' value='gray'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>
+								<div style="display: flex;align-items:center;">
+									<div class="radio-button-color color-green">.</div>Green
+								</div>
+								<input type='radio' id='color' name='color' value='green'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>
+								<div style="display: flex;align-items:center;">
+									<div class="radio-button-color color-black">.</div>Black
+								</div>
+								<input type='radio' id='color' name='color' value='black'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>
+								<div style="display: flex;align-items:center;">
+									<div class="radio-button-color color-blue">.</div>Blue
+								</div>
+								<input type='radio' id='color' name='color' value='blue'>
+								<span class='checkmark'></span>
+							</label>
+							<label class='radio-button-group '>
+								<div style="display: flex;align-items:center;">
+									<div class="radio-button-color color-white">.</div>White
+								</div>
+								<input type='radio' id='color' name='color' value='white'>
+								<span class='checkmark'></span>
+							</label>
 						</div>
 					</div>
 				</div>
 				<div class="modal-filter-group-button">
-					<div class="button-filter" id="button-filter" onclick="onChangeResult()">View Result <i class="fa-solid fa-chevron-right"></i></div>
+					<div class="button-filter" id="button-filter" onclick="onChangeResult()"> Result <i class="fa-solid fa-chevron-right"></i></div>
 				</div>
 			</div>
 		</div>
@@ -161,78 +522,52 @@ do_action('woocommerce_before_main_content');
 	 * @hooked woocommerce_taxonomy_archive_description - 10
 	 * @hooked woocommerce_product_archive_description - 10
 	 */
-	
+	do_action('woocommerce_archive_description');
 	?>
 </header>
 <?php
-if (isset($_GET['cat'])) {
-	$args = array(
-		'post_type' 	=> 'product',
-		'category__in'	=> $_GET['cat'],
-		'posts_per_page'=> 12,
-		'tax_query'		=> array(
-	    	array(
-		    	'taxonomy' 		=> 'pa_color',
-				'terms' 		=> $_GET['color'],
-				'field' 		=> 'slug',
-				'operator' 		=> 'IN'
-			),
-			array(
-		    	'taxonomy' 		=> 'pa_size',
-				'terms' 		=> $_GET['size'],
-				'field' 		=> 'slug',
-				'operator' 		=> 'IN'
-			)
-	    )
-	);
-	$products = new WP_Query( $args );
-	echo "<pre>";
-	var_dump($products->have_posts());
-}else{
-	if (woocommerce_product_loop()) {
+if (woocommerce_product_loop()) {
 
-		/**
-		 * Hook: woocommerce_before_shop_loop.
-		 *
-		 * @hooked woocommerce_output_all_notices - 10
-		 * @hooked woocommerce_result_count - 20
-		 * @hooked woocommerce_catalog_ordering - 30
-		 */
-		do_action('woocommerce_before_shop_loop');
+	/**
+	 * Hook: woocommerce_before_shop_loop.
+	 *
+	 * @hooked woocommerce_output_all_notices - 10
+	 * @hooked woocommerce_result_count - 20
+	 * @hooked woocommerce_catalog_ordering - 30
+	 */
+	do_action('woocommerce_before_shop_loop');
 
-		woocommerce_product_loop_start();
+	woocommerce_product_loop_start();
 
-		if (wc_get_loop_prop('total')) {
-			while (have_posts()) {
-				the_post();
+	if (wc_get_loop_prop('total')) {
+		while (have_posts()) {
+			the_post();
 
-				/**
-				 * Hook: woocommerce_shop_loop.
-				 */
-				do_action('woocommerce_shop_loop');
+			/**
+			 * Hook: woocommerce_shop_loop.
+			 */
+			do_action('woocommerce_shop_loop');
 
-				wc_get_template_part('content', 'product');
-			}
+			wc_get_template_part('content', 'product');
 		}
-
-		woocommerce_product_loop_end();
-
-		/**
-		 * Hook: woocommerce_after_shop_loop.
-		 *
-		 * @hooked woocommerce_pagination - 10
-		 */
-		do_action('woocommerce_after_shop_loop');
-	} else {
-		/**
-		 * Hook: woocommerce_no_products_found.
-		 *
-		 * @hooked wc_no_products_found - 10
-		 */
-		do_action('woocommerce_no_products_found');
 	}
-}
 
+	woocommerce_product_loop_end();
+
+	/**
+	 * Hook: woocommerce_after_shop_loop.
+	 *
+	 * @hooked woocommerce_pagination - 10
+	 */
+	do_action('woocommerce_after_shop_loop');
+} else {
+	/**
+	 * Hook: woocommerce_no_products_found.
+	 *
+	 * @hooked wc_no_products_found - 10
+	 */
+	do_action('woocommerce_no_products_found');
+}
 
 /**
  * Hook: woocommerce_after_main_content.
@@ -398,43 +733,102 @@ if (isset($_GET['cat'])) {
 	<div>
 		<script>
 			function onOpenModalFilter() {
-				jQuery("#modal-filter" ).slideToggle( "slow");
+				document.getElementById("modal-filter").style.display = "flex";
 			}
 
 			function onChangeResult() {
-				var cat = '';
-				var size = '';
-				var price = '';
-				var color = '';
+				let current_url = window.location.href;
+				let new_url = ''
+				let filter_url = ''
 
+				//check sorting
+				let url_sorting = ''
+				if (current_url.includes("orderby")) {
+					split_url = current_url.split('orderby')
+					split_url = split_url[split_url.length - 1]
+					url_sorting = '/?orderby' + split_url
+				}
+
+
+
+				if (current_url.includes("shop")) {
+					filter_url = current_url.split('shop')
+					new_url = filter_url[0];
+				} else {
+					filter_url = current_url.split('product-category')
+					new_url = filter_url[0];
+				}
+
+				//Filter Category
+
+				let url_category = ''
+				let category_selected = null
 				if (document.querySelector('input[name="category"]:checked')) {
-					cat = document.querySelector('input[name="category"]:checked').value;
+					category_selected = document.querySelector('input[name="category"]:checked').value.toLowerCase()
+					if (category_selected) {
+						url_category = `/product-category/${category_selected}`
+					} else {
+						url_category = ''
+					}
 				}
-				if (document.querySelector('input[name="size"]:checked')) {
-					size = document.querySelector('input[name="size"]:checked').value;
-				}
+
+				//Filter Category12
+				let url_price = ''
 				if (document.querySelector('input[name="price"]:checked')) {
-					price = document.querySelector('input[name="price"]:checked').value;
+					let price_selected = document.querySelector('input[name="price"]:checked').value.toLowerCase();
+					let split_price = price_selected.split(',')
+					let url_price_before = ''
+					if (category_selected) {
+						url_price_before = `?min_price=${split_price[0]}&max_price=${split_price[1]}`
+					} else {
+						url_price_before = `shop?min_price=${split_price[0]}&max_price=${split_price[1]}`
+					}
+
+					if (url_price_before) {
+						url_price = url_price_before
+					} else {
+						url_price = ''
+					}
 				}
-				if (document.querySelector('input[name="color"]:checked')) {
-					color = document.querySelector('input[name="color"]:checked').value;
-				}
-				
-				let current_url = window.location.href.split('?')[0];
-				let new_url = current_url+'?cat='+cat+'&size='+size+'&price='+price+'&color='+color;
-				window.location.href = new_url
+
+				window.location.href = new_url + url_category + url_price + url_sorting
+
+
+
 
 			}
 
 			function onOpenModalSorting() {
-				jQuery("#modal-sorting" ).slideToggle( "slow");
+				document.getElementById("modal-sorting").style.display = "flex";
 			}
 
 			function goSorting(sorting) {
 				var current_location = window.location.href;
-				window.location = current_location + sorting;
+				let url_sorting = ''
+				if (current_location.includes("/?orderby")) {
+					split_url = current_location.split('/?orderby')
+					split_url = split_url[0]
+					url_sorting = split_url
+				}
+
+
+				window.location = url_sorting + `/?orderby=${sorting}`
 			}
 
+
+
+			document.addEventListener('mouseup', function(e) {
+				var container = document.getElementById('modal-filter');
+				if (!container.contains(e.target)) {
+					document.getElementById("modal-filter").style.display = "none";
+				}
+			});
+			document.addEventListener('mouseup', function(e) {
+				var container = document.getElementById('modal-sorting');
+				if (!container.contains(e.target)) {
+					document.getElementById("modal-sorting").style.display = "none";
+				}
+			});
 		</script>
 
 

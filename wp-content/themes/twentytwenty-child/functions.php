@@ -66,20 +66,6 @@ function my_custom_scripts()
 	wp_enqueue_script('custom-js', get_stylesheet_directory_uri() . '/script.js', array('jquery'), '', true);
 }
 
-add_filter('loop_shop_columns', 'loop_columns', 999);
-if (!function_exists('loop_columns')) {
-	function loop_columns() {
-		return 3; // 3 products per row
-	}
-}
-
-add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_home_text' );
-function wcc_change_breadcrumb_home_text( $defaults ) {
-    // Change the breadcrumb home text from 'Home' to 'Apartment'
-	$defaults['home'] = 'Apartment';
-	return $defaults;
-}
-
 function twentyfifteen_child_widgets_init()
 {
 	register_sidebar(array(
