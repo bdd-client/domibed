@@ -34,13 +34,17 @@ do_action('woocommerce_before_customer_login_form'); ?>
 			display: flex;
 			position: relative;
 			justify-content: flex-start;
-			margin-left: -8px !important;
 		}
 
 		.mo-openid-app-icons a {
 			width: 100% !important;
-			margin-left: -30px !important;
+			margin-left: 20px !important;
 			left: 0 !important;
+			font-weight: bold !important;
+		}
+
+		.mo-openid-app-icons a i {
+			display: none;
 		}
 
 		.section-inner {
@@ -56,7 +60,7 @@ do_action('woocommerce_before_customer_login_form'); ?>
 		}
 
 		.register-wrapper {
-			display: flex;
+			display: none;
 			width: 100%;
 			height: 100%;
 			display: normalizer_is_normalized;
@@ -284,6 +288,15 @@ do_action('woocommerce_before_customer_login_form'); ?>
 		.login-text-footer {
 			display: flex;
 			justify-content: center;
+			margin-top: 40px;
+			font-size: 14px;
+			color: #797979;
+			font-weight: 600;
+		}
+
+		.register-text-footer {
+			display: flex;
+			justify-content: center;
 			margin-top: 10px;
 			font-size: 14px;
 			color: #797979;
@@ -326,6 +339,31 @@ do_action('woocommerce_before_customer_login_form'); ?>
 			top: 3px;
 			cursor: pointer;
 		}
+
+		.login-google {
+			display: flex;
+			justify-content: space-between;
+			position: relative;
+		}
+
+		.login-google-icon-left {
+			z-index: 3;
+			position: absolute;
+			left: 16;
+			height: 100%;
+			display: flex;
+			align-items: center;
+
+		}
+
+		.login-google-icon-right {
+			z-index: 3;
+			height: 100%;
+			position: absolute;
+			right: 20;
+			display: flex;
+			align-items: center;
+		}
 	</style>
 
 	<div class="login-wrapper" id="login-wrapper">
@@ -343,7 +381,9 @@ do_action('woocommerce_before_customer_login_form'); ?>
 						<div style="display: flex;align-items:center;"><input type="checkbox" id="remember-me" name="remember-me" value="remember-me">Remember me</div>
 						<a href="<?php echo esc_url(wp_lostpassword_url()); ?>" class="login-forgot-password">Forgot Password</a>
 					</div>
+
 					<?php wp_nonce_field('woocommerce-login', 'woocommerce-login-nonce'); ?>
+
 					<button class="login-btn-box-submit" type="submit" class="woocommerce-button button woocommerce-form-login__submit" name="login" value="<?php esc_attr_e('Log in', 'woocommerce'); ?>">
 						<div class="login-btn-content-left"><img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-cart.png" alt=""></div>
 						Login
@@ -353,7 +393,11 @@ do_action('woocommerce_before_customer_login_form'); ?>
 						<div class="login-line">.</div>
 						<div class="login-line-title">or</div>
 					</div>
-					<?php do_action('woocommerce_login_form_start'); ?>
+					<div class="login-google">
+						<div class="login-google-icon-left"><img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-google.png" alt=""></div>
+						<?php do_action('woocommerce_login_form_start'); ?>
+						<div class="login-google-icon-right"><img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-arrow-right-black.png" alt=""></div>
+					</div>
 					<div class="login-text-footer">Don’t have an Account? <span style="margin-left: 2px;font-weight:600; cursor:pointer;" onclick="showRegister()">
 							Create Account
 						</span></div>
@@ -366,8 +410,6 @@ do_action('woocommerce_before_customer_login_form'); ?>
 			<div class="login-title">Register</div>
 			<div class="login-label">Sign up with us and receive updates on our items and promotions</div>
 			<form method="post" class="woocommerce-form woocommerce-form-register register" <?php do_action('woocommerce_register_form_tag'); ?>>
-
-
 				<input type="text" name="billing_first_name" id="reg_billing_first_name" autocomplete="reg_billing_first_name" placeholder="First Name.." value="<?php if (!empty($_POST['billing_first_name'])) esc_attr_e($_POST['billing_first_name']); ?>" />
 				<input type="text" id="billing_last_name" name="billing_last_name" value="<?php if (!empty($_POST['billing_last_name'])) esc_attr_e($_POST['billing_last_name']); ?>" placeholder="Last Name.."><br>
 				<input type="email" id="reg_email" name="email" id="reg_email" value="<?php echo (!empty($_POST['email'])) ? esc_attr(wp_unslash($_POST['email'])) : ''; ?>" placeholder="Input Email.."><br>
@@ -387,7 +429,11 @@ do_action('woocommerce_before_customer_login_form'); ?>
 					<div class="login-line">.</div>
 					<div class="login-line-title">or</div>
 				</div>
-				<?php do_action('woocommerce_login_form_start'); ?>
+				<div class="login-google">
+					<div class="login-google-icon-left"><img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-google.png" alt=""></div>
+					<?php do_action('woocommerce_login_form_start'); ?>
+					<div class="login-google-icon-right"><img src="<?= get_site_url(); ?>/wp-content/uploads/2022/06/icon-arrow-right-black.png" alt=""></div>
+				</div>
 				<div class="login-text-footer">Already have an Account? <span style="margin-left: 2px;font-weight:600;cursor:pointer;" onclick="hideRegister()">Login here</span></div>
 
 
@@ -398,6 +444,11 @@ do_action('woocommerce_before_customer_login_form'); ?>
 		</div>
 	</div>
 	<script>
+		const box = document.querySelector('.mo-openid-app-icons a');
+		box.setAttribute('id', 'mo-openid-app-icons');
+		var x = document.getElementById("mo-openid-app-icons");
+		x.innerHTML = "Login With Google";
+
 		function showRegister() {
 			document.getElementById("register-wrapper").style.display = "flex";
 		}
