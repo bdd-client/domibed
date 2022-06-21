@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="checkout-button button alt wc-forward">
+<a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="custom-style-atc checkout-button button alt wc-forward">
+	<div class="box-img-atc"><img src="<?=get_site_url();?>/wp-content/uploads/2022/06/Bag.png" alt=""></div>
 	<?php esc_html_e( 'Proceed to checkout', 'woocommerce' ); ?>
 </a>
